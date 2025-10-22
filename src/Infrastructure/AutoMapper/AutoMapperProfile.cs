@@ -1,6 +1,6 @@
 ﻿using Application.DTOs;
 using AutoMapper;
-using Domain.Model;
+using Domain.Models;
 
 namespace Infrastructure.AutoMapper
 {
@@ -9,6 +9,7 @@ namespace Infrastructure.AutoMapper
 		public AutoMapperProfile()
 		{
 			CreateMap<EmployeeAddEditDto, Employee>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+			CreateMap<GroupAddEditDto, Group>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 		}
 	}
 }

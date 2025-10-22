@@ -1,11 +1,5 @@
-﻿using Domain.Model;
-using Domain.Models;
+﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.DBContext
 {
@@ -19,6 +13,10 @@ namespace Infrastructure.DBContext
         public DbSet<EmployeeLocalization> EmployeeLocalizations { get; set; }
         public DbSet<StatusType> StatusTypes { get; set; }
         public DbSet<Status> Status { get; set; }
+
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<GroupAudit> GroupAudits { get; set; }
+        public DbSet<GroupLocalization> GroupLocalizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

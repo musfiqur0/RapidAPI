@@ -12,6 +12,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IGroupService, GroupService>();
 
         }
     }

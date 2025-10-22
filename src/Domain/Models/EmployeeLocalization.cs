@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Domain.Model;
+namespace Domain.Models;
 
 public class EmployeeLocalization
 {

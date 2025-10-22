@@ -7,13 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Service
 {
-    public class EmployeeService : IEmployeeService
+    public class GroupService : IGroupService
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-
-        public EmployeeService(ApplicationDbContext context, IMapper mapper)
+        public GroupService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -23,50 +22,43 @@ namespace Infrastructure.Service
         {
             try
             {
-                var employeesQuery = _context.Employees
+                var groupsQuery = _context.Groups
                     .Include(e => e.Status)
                     .AsQueryable();
 
-                var totalCount = await employeesQuery.CountAsync();
-                var activeCount = await employeesQuery
+                var totalCount = await groupsQuery.CountAsync();
+                var activeCount = await groupsQuery
                     .Where(e => e.Status != null && e.Status.Name == "Active")
                     .CountAsync();
-                var inactiveCount = await employeesQuery
+                var inactiveCount = await groupsQuery
                     .Where(e => e.Status != null && e.Status.Name == "Inactive")
                     .CountAsync();
-                var draftCount = await employeesQuery
+                var draftCount = await groupsQuery
                     .Where(e => e.Status != null && e.Status.Name == "Draft")
                     .CountAsync();
-                var updatedCount = await employeesQuery
+                var updatedCount = await groupsQuery
                     .Where(e => e.Status != null && e.Status.Name == "Updated")
                     .CountAsync();
-                var deletedCount = await employeesQuery
+                var deletedCount = await groupsQuery
                     .Where(e => e.Status != null && e.Status.Name == "Deleted")
                     .CountAsync();
 
                 if (pageNumber > 0 && pageSize > 0)
                 {
-                    employeesQuery = employeesQuery
+                    groupsQuery = groupsQuery
                         .OrderBy(e => e.Id)
                         .Skip((pageNumber - 1) * pageSize)
                         .Take(pageSize);
                 }
 
-                var employees = await (
-                    from e in employeesQuery
-                    join l in _context.EmployeeLocalizations on e.Id equals l.EmployeeId
+                var groups = await (
+                    from e in groupsQuery
+                    join l in _context.GroupLocalizations on e.Id equals l.GroupId
                     select new
                     {
                         id = e.Id,
                         code = e.Code,
-                        employeeName = !string.IsNullOrEmpty(l.Name) ? l.Name : e.Name,
-                        email = e.Email,
-                        phone = e.Phone,
-                        department = e.Department,
-                        designation = e.Designation,
-                        salary = e.Salary,
-                        manager = e.Manager,
-                        location = e.Location,
+                        groupName = !string.IsNullOrEmpty(l.Name) ? l.Name : e.Name,
                         statusId = e.StatusId,
                         statusName = e.Status != null ? e.Status.Name : null,
                         @default = e.Default,
@@ -77,7 +69,7 @@ namespace Infrastructure.Service
 
                 var result = new
                 {
-                    employees,
+                    groups,
                     statusCounter = new
                     {
                         Total = totalCount,
@@ -106,12 +98,12 @@ namespace Infrastructure.Service
         }
 
 
-        public async Task<EmployeeAddEditDto?> GetSingleAsync(int id)
+        public async Task<GroupAddEditDto?> GetSingleAsync(int id)
         {
             try
             {
-                var obj = await _context.Employees.FindAsync(id);
-                var resultedData = _mapper.Map<EmployeeAddEditDto>(obj);
+                var obj = await _context.Groups.FindAsync(id);
+                var resultedData = _mapper.Map<GroupAddEditDto>(obj);
                 return resultedData;
             }
             catch (Exception)
@@ -120,33 +112,29 @@ namespace Infrastructure.Service
             }
         }
 
-        public async Task<EmployeeAddEditDto> CreateSingleAsync(EmployeeAddEditDto dto)
+        public async Task<GroupAddEditDto> CreateSingleAsync(GroupAddEditDto dto)
         {
             try
             {
-                var employee = _mapper.Map<Employee>(dto);
-                _context.Employees.Add(employee);
+                var group = _mapper.Map<Group>(dto);
+                _context.Groups.Add(group);
                 await _context.SaveChangesAsync();
-                var resultedData = _mapper.Map<EmployeeAddEditDto>(employee);
+                var resultedData = _mapper.Map<GroupAddEditDto>(group);
 
-                var local = new EmployeeLocalization
+                var local = new GroupLocalization
                 {
-                    EmployeeId = resultedData.Id,
+                    GroupId = resultedData.Id,
                     Name = resultedData.Name,
                     LanguageId = 1,
                 };
-                _context.EmployeeLocalizations.Add(local);
+                _context.GroupLocalizations.Add(local);
                 await _context.SaveChangesAsync();
 
 
-                var audit = new EmployeeAudit
+                var audit = new GroupAudit
                 {
                     Name = resultedData.Name,
-                    EmployeeId = resultedData.Id,
-                    Email = resultedData.Email,
-                    Phone = resultedData.Phone,
-                    Department = resultedData.Department,
-                    Designation = resultedData.Designation,
+                    GroupId = resultedData.Id,
                     ActionTypeId = 1,
                     Browser = "seeded",
                     Location = "seeded",
@@ -154,7 +142,7 @@ namespace Infrastructure.Service
                     OS = "seeded",
                     MapURL = "seeded"
                 };
-                _context.EmployeeAudits.Add(audit);
+                _context.GroupAudits.Add(audit);
                 await _context.SaveChangesAsync();
                 return resultedData;
             }
@@ -165,17 +153,17 @@ namespace Infrastructure.Service
             }
         }
 
-        public async Task<IEnumerable<EmployeeAddEditDto>> CreateBulkAsync(IEnumerable<EmployeeAddEditDto> dto)
+        public async Task<IEnumerable<GroupAddEditDto>> CreateBulkAsync(IEnumerable<GroupAddEditDto> dto)
         {
             try
             {
-                List<EmployeeAddEditDto> dataList = new List<EmployeeAddEditDto>();
+                List<GroupAddEditDto> dataList = new List<GroupAddEditDto>();
                 foreach (var item in dto)
                 {
                     var insertedItem = await CreateSingleAsync(item);
                     dataList.Add(insertedItem);
                 }
-                //_context.Employees.AddRange(employees);
+                //_context.Groups.AddRange(groups);
                 return dataList;
             }
             catch (Exception)
@@ -184,28 +172,24 @@ namespace Infrastructure.Service
             }
         }
 
-        public async Task<EmployeeAddEditDto> UpdateAsync(EmployeeAddEditDto dto)
+        public async Task<GroupAddEditDto> UpdateAsync(GroupAddEditDto dto)
         {
             try
             {
-                var employee = await _context.Employees.FirstAsync(x => x.Id == dto.Id);
-                if (employee == null)
+                var group = await _context.Groups.FirstAsync(x => x.Id == dto.Id);
+                if (group == null)
                     throw new Exception("Something error");
-                dto.Id = employee.Id;
-                _mapper.Map(dto, employee);
+                dto.Id = group.Id;
+                _mapper.Map(dto, group);
 
-                _context.Employees.Update(employee);
+                _context.Groups.Update(group);
                 await _context.SaveChangesAsync();
-                var resultedData = _mapper.Map<EmployeeAddEditDto>(employee);
+                var resultedData = _mapper.Map<GroupAddEditDto>(group);
 
-                var audit = new EmployeeAudit
+                var audit = new GroupAudit
                 {
                     Name = resultedData.Name,
-                    EmployeeId = resultedData.Id,
-                    Email = resultedData.Email,
-                    Phone = resultedData.Phone,
-                    Department = resultedData.Department,
-                    Designation = resultedData.Designation,
+                    GroupId = resultedData.Id,
                     ActionTypeId = 2,
                     Browser = "seeded",
                     Location = "seeded",
@@ -214,7 +198,7 @@ namespace Infrastructure.Service
                     MapURL = "seeded"
 
                 };
-                _context.EmployeeAudits.Add(audit);
+                _context.GroupAudits.Add(audit);
 
                 await _context.SaveChangesAsync();
                 return resultedData;
@@ -229,17 +213,13 @@ namespace Infrastructure.Service
         {
             try
             {
-                var employee = await _context.Employees.FindAsync(id);
-                if (employee == null) return false;
+                var group = await _context.Groups.FindAsync(id);
+                if (group == null) return false;
 
-                var audit = new EmployeeAudit
+                var audit = new GroupAudit
                 {
-                    Name = employee.Name,
-                    EmployeeId = employee.Id,
-                    Email = employee.Email,
-                    Phone = employee.Phone,
-                    Department = employee.Department,
-                    Designation = employee.Designation,
+                    Name = group.Name,
+                    GroupId = group.Id,
                     ActionTypeId = 3,
                     Browser = "seeded",
                     Location = "seeded",
@@ -248,18 +228,18 @@ namespace Infrastructure.Service
                     MapURL = "seeded"
 
                 };
-                _context.EmployeeAudits.Add(audit);
+                _context.GroupAudits.Add(audit);
                 await _context.SaveChangesAsync();
 
 
-                var local = await _context.EmployeeLocalizations.FindAsync(id);
+                var local = await _context.GroupLocalizations.FindAsync(id);
                 if (local != null)
                 {
-                    _context.EmployeeLocalizations.Remove(local);
+                    _context.GroupLocalizations.Remove(local);
                     await _context.SaveChangesAsync();
                 }
 
-                _context.Employees.Remove(employee);
+                _context.Groups.Remove(group);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -292,8 +272,8 @@ namespace Infrastructure.Service
                 // return static or predefined template data
                 var data = new List<object>
             {
-                new { Department = "IT", Designation = "Developer" },
-                new { Department = "HR", Designation = "Manager" }
+                new { Code = "101"},
+                new { Code = "505"}
             }.AsEnumerable();
 
                 return Task.FromResult(data);
@@ -328,7 +308,7 @@ namespace Infrastructure.Service
         {
             try
             {
-                var audits = _context.EmployeeAudits
+                var audits = _context.GroupAudits
                                     .OrderByDescending(x => x.Id)
                                     .ToList();
                 return audits;
