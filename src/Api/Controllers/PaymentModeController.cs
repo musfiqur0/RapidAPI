@@ -1,4 +1,5 @@
-﻿using Application.DTOs;
+﻿using Application.Common;
+using Application.DTOs;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,69 +23,139 @@ namespace Api.Controllers
         public async Task<IActionResult> GetAll(int pageNumber = 0, int pageSize = 0)
         {
             var result = await _service.GetAllAsync(pageNumber, pageSize);
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSingle(int id)
         {
             var result = await _service.GetSingleAsync(id);
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSingle(PaymentModeAddEditDto dto)
         {
             var result = await _service.CreateSingleAsync(dto);
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBulk(List<PaymentModeAddEditDto> dto)
         {
             var result = await _service.CreateBulkAsync(dto);
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(PaymentModeAddEditDto dto)
         {
             var result = await _service.UpdateAsync(dto);
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
-            return Ok();
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = null
+            };
+            return Ok(response);
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteBulk([FromBody] List<int> ids)
         {
             var result = await _service.DeleteBulkAsync(ids);
-            return Ok();
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = null
+            };
+            return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllTemplateData()
         {
             var result = await _service.GetAllTemplateDataAsync();
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllGallary()
         {
             var result = await _service.GetAllGallaryAsync();
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAudits()
         {
             var result = await _service.GetAllAuditsAsync();
-            return Ok(result);
+            var response = new RequestResponse
+            {
+                IsSuccess = true,
+                StatusCode = 200,
+                Message = "Success",
+                Data = result
+            };
+            return Ok(response);
         }
     }
 }
