@@ -1,322 +1,321 @@
 ﻿using Application.DTOs;
-using Application.Interface;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Models;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Service
+namespace Infrastructure.Services;
+
+public class GroupService : IGroupService
 {
-    public class GroupService : IGroupService
+    private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
+
+    public GroupService(ApplicationDbContext context, IMapper mapper)
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
+        _context = context;
+        _mapper = mapper;
+    }
 
-        public GroupService(ApplicationDbContext context, IMapper mapper)
+    public async Task<object> GetAllAsync(int pageNumber = 0, int pageSize = 0)
+    {
+        try
         {
-            _context = context;
-            _mapper = mapper;
-        }
+            var groupsQuery = _context.Groups
+                .Include(e => e.Status)
+                .AsQueryable();
 
-        public async Task<object> GetAllAsync(int pageNumber = 0, int pageSize = 0)
-        {
-            try
+            var totalCount = await groupsQuery.CountAsync();
+            var activeCount = await groupsQuery
+                .Where(e => e.Status != null && e.Status.Name == "Active")
+                .CountAsync();
+            var inactiveCount = await groupsQuery
+                .Where(e => e.Status != null && e.Status.Name == "Inactive")
+                .CountAsync();
+            var draftCount = await groupsQuery
+                .Where(e => e.Status != null && e.Status.Name == "Draft")
+                .CountAsync();
+            var updatedCount = await groupsQuery
+                .Where(e => e.Status != null && e.Status.Name == "Updated")
+                .CountAsync();
+            var deletedCount = await groupsQuery
+                .Where(e => e.Status != null && e.Status.Name == "Deleted")
+                .CountAsync();
+
+            if (pageNumber > 0 && pageSize > 0)
             {
-                var groupsQuery = _context.Groups
-                    .Include(e => e.Status)
-                    .AsQueryable();
+                groupsQuery = groupsQuery
+                    .OrderBy(e => e.Id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize);
+            }
 
-                var totalCount = await groupsQuery.CountAsync();
-                var activeCount = await groupsQuery
-                    .Where(e => e.Status != null && e.Status.Name == "Active")
-                    .CountAsync();
-                var inactiveCount = await groupsQuery
-                    .Where(e => e.Status != null && e.Status.Name == "Inactive")
-                    .CountAsync();
-                var draftCount = await groupsQuery
-                    .Where(e => e.Status != null && e.Status.Name == "Draft")
-                    .CountAsync();
-                var updatedCount = await groupsQuery
-                    .Where(e => e.Status != null && e.Status.Name == "Updated")
-                    .CountAsync();
-                var deletedCount = await groupsQuery
-                    .Where(e => e.Status != null && e.Status.Name == "Deleted")
-                    .CountAsync();
-
-                if (pageNumber > 0 && pageSize > 0)
+            var groups = await (
+                from e in groupsQuery
+                join l in _context.GroupLocalizations on e.Id equals l.GroupId
+                select new
                 {
-                    groupsQuery = groupsQuery
-                        .OrderBy(e => e.Id)
-                        .Skip((pageNumber - 1) * pageSize)
-                        .Take(pageSize);
+                    id = e.Id,
+                    code = e.Code,
+                    groupName = !string.IsNullOrEmpty(l.Name) ? l.Name : e.Name,
+                    statusId = e.StatusId,
+                    statusName = e.Status != null ? e.Status.Name : null,
+                    @default = e.Default,
+                    action = e.Action,
+                    localizationId = l.Id
                 }
+            ).ToListAsync();
 
-                var groups = await (
-                    from e in groupsQuery
-                    join l in _context.GroupLocalizations on e.Id equals l.GroupId
-                    select new
+            var result = new
+            {
+                groups,
+                statusCounter = new
+                {
+                    Total = totalCount,
+                    Active = activeCount,
+                    Inactive = inactiveCount,
+                    Draft = draftCount,
+                    Updated = updatedCount,
+                    Deleted = deletedCount
+                },
+                pagination = (pageNumber > 0 && pageSize > 0)
+                    ? new
                     {
-                        id = e.Id,
-                        code = e.Code,
-                        groupName = !string.IsNullOrEmpty(l.Name) ? l.Name : e.Name,
-                        statusId = e.StatusId,
-                        statusName = e.Status != null ? e.Status.Name : null,
-                        @default = e.Default,
-                        action = e.Action,
-                        localizationId = l.Id
+                        PageNumber = pageNumber,
+                        PageSize = pageSize,
+                        TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
                     }
-                ).ToListAsync();
+                    : null
+            };
 
-                var result = new
-                {
-                    groups,
-                    statusCounter = new
-                    {
-                        Total = totalCount,
-                        Active = activeCount,
-                        Inactive = inactiveCount,
-                        Draft = draftCount,
-                        Updated = updatedCount,
-                        Deleted = deletedCount
-                    },
-                    pagination = (pageNumber > 0 && pageSize > 0)
-                        ? new
-                        {
-                            PageNumber = pageNumber,
-                            PageSize = pageSize,
-                            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
-                        }
-                        : null
-                };
-
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return result;
         }
-
-
-        public async Task<GroupAddEditDto?> GetSingleAsync(int id)
+        catch (Exception)
         {
-            try
-            {
-                var obj = await _context.Groups.FindAsync(id);
-                var resultedData = _mapper.Map<GroupAddEditDto>(obj);
-                return resultedData;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<GroupAddEditDto> CreateSingleAsync(GroupAddEditDto dto)
+
+    public async Task<GroupAddEditDto?> GetSingleAsync(int id)
+    {
+        try
         {
-            try
-            {
-                var group = _mapper.Map<Group>(dto);
-                _context.Groups.Add(group);
-                await _context.SaveChangesAsync();
-                var resultedData = _mapper.Map<GroupAddEditDto>(group);
-
-                var local = new GroupLocalization
-                {
-                    GroupId = resultedData.Id,
-                    Name = resultedData.Name,
-                    LanguageId = 1,
-                };
-                _context.GroupLocalizations.Add(local);
-                await _context.SaveChangesAsync();
-
-
-                var audit = new GroupAudit
-                {
-                    Name = resultedData.Name,
-                    GroupId = resultedData.Id,
-                    ActionTypeId = 1,
-                    Browser = "seeded",
-                    Location = "seeded",
-                    IP = "seeded",
-                    OS = "seeded",
-                    MapURL = "seeded"
-                };
-                _context.GroupAudits.Add(audit);
-                await _context.SaveChangesAsync();
-                return resultedData;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            var obj = await _context.Groups.FindAsync(id);
+            var resultedData = _mapper.Map<GroupAddEditDto>(obj);
+            return resultedData;
         }
-
-        public async Task<IEnumerable<GroupAddEditDto>> CreateBulkAsync(IEnumerable<GroupAddEditDto> dto)
+        catch (Exception)
         {
-            try
-            {
-                List<GroupAddEditDto> dataList = new List<GroupAddEditDto>();
-                foreach (var item in dto)
-                {
-                    var insertedItem = await CreateSingleAsync(item);
-                    dataList.Add(insertedItem);
-                }
-                //_context.Groups.AddRange(groups);
-                return dataList;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<GroupAddEditDto> UpdateAsync(GroupAddEditDto dto)
+    public async Task<GroupAddEditDto> CreateSingleAsync(GroupAddEditDto dto)
+    {
+        try
         {
-            try
+            var group = _mapper.Map<Group>(dto);
+            _context.Groups.Add(group);
+            await _context.SaveChangesAsync();
+            var resultedData = _mapper.Map<GroupAddEditDto>(group);
+
+            var local = new GroupLocalization
             {
-                var group = await _context.Groups.FirstAsync(x => x.Id == dto.Id);
-                if (group == null)
-                    throw new Exception("Something error");
-                dto.Id = group.Id;
-                _mapper.Map(dto, group);
+                GroupId = resultedData.Id,
+                Name = resultedData.Name,
+                LanguageId = 1,
+            };
+            _context.GroupLocalizations.Add(local);
+            await _context.SaveChangesAsync();
 
-                _context.Groups.Update(group);
-                await _context.SaveChangesAsync();
-                var resultedData = _mapper.Map<GroupAddEditDto>(group);
 
-                var audit = new GroupAudit
-                {
-                    Name = resultedData.Name,
-                    GroupId = resultedData.Id,
-                    ActionTypeId = 2,
-                    Browser = "seeded",
-                    Location = "seeded",
-                    IP = "seeded",
-                    OS = "seeded",
-                    MapURL = "seeded"
-
-                };
-                _context.GroupAudits.Add(audit);
-
-                await _context.SaveChangesAsync();
-                return resultedData;
-            }
-            catch (Exception)
+            var audit = new GroupAudit
             {
-                throw;
-            }
+                Name = resultedData.Name,
+                GroupId = resultedData.Id,
+                ActionTypeId = (short)EntityState.Added,
+                Browser = "seeded",
+                Location = "seeded",
+                IP = "seeded",
+                OS = "seeded",
+                MapURL = "seeded"
+            };
+            _context.GroupAudits.Add(audit);
+            await _context.SaveChangesAsync();
+            return resultedData;
         }
-
-        public async Task<bool> DeleteAsync(int id)
+        catch (Exception)
         {
-            try
-            {
-                var group = await _context.Groups.FindAsync(id);
-                if (group == null) return false;
 
-                var audit = new GroupAudit
-                {
-                    Name = group.Name,
-                    GroupId = group.Id,
-                    ActionTypeId = 3,
-                    Browser = "seeded",
-                    Location = "seeded",
-                    IP = "seeded",
-                    OS = "seeded",
-                    MapURL = "seeded"
-
-                };
-                _context.GroupAudits.Add(audit);
-                await _context.SaveChangesAsync();
-
-
-                var local = await _context.GroupLocalizations.FindAsync(id);
-                if (local != null)
-                {
-                    _context.GroupLocalizations.Remove(local);
-                    await _context.SaveChangesAsync();
-                }
-
-                _context.Groups.Remove(group);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<bool> DeleteBulkAsync(List<int> ids)
+    public async Task<IEnumerable<GroupAddEditDto>> CreateBulkAsync(IEnumerable<GroupAddEditDto> dto)
+    {
+        try
         {
-            try
+            List<GroupAddEditDto> dataList = new List<GroupAddEditDto>();
+            foreach (var item in dto)
             {
-                foreach (var id in ids)
-                {
-                    await DeleteAsync(id);
-                }
-                return true;
+                var insertedItem = await CreateSingleAsync(item);
+                dataList.Add(insertedItem);
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            //_context.Groups.AddRange(groups);
+            return dataList;
         }
-
-        public Task<IEnumerable<object>> GetAllTemplateDataAsync()
+        catch (Exception)
         {
-            try
+            throw;
+        }
+    }
+
+    public async Task<GroupAddEditDto> UpdateAsync(GroupAddEditDto dto)
+    {
+        try
+        {
+            var group = await _context.Groups.FirstAsync(x => x.Id == dto.Id);
+            if (group == null)
+                throw new Exception("Something error");
+            dto.Id = group.Id;
+            _mapper.Map(dto, group);
+
+            _context.Groups.Update(group);
+            await _context.SaveChangesAsync();
+            var resultedData = _mapper.Map<GroupAddEditDto>(group);
+
+            var audit = new GroupAudit
             {
-                // return static or predefined template data
-                var data = new List<object>
+                Name = resultedData.Name,
+                GroupId = resultedData.Id,
+                ActionTypeId = (short)EntityState.Modified,
+                Browser = "seeded",
+                Location = "seeded",
+                IP = "seeded",
+                OS = "seeded",
+                MapURL = "seeded"
+
+            };
+            _context.GroupAudits.Add(audit);
+
+            await _context.SaveChangesAsync();
+            return resultedData;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        try
+        {
+            var group = await _context.Groups.FindAsync(id);
+            if (group == null) return false;
+
+            var audit = new GroupAudit
             {
-                new { Code = "101"},
-                new { Code = "505"}
+                Name = group.Name,
+                GroupId = group.Id,
+                ActionTypeId = (short)EntityState.Deleted,
+                Browser = "seeded",
+                Location = "seeded",
+                IP = "seeded",
+                OS = "seeded",
+                MapURL = "seeded"
+
+            };
+            _context.GroupAudits.Add(audit);
+            await _context.SaveChangesAsync();
+
+
+            var local = await _context.GroupLocalizations.FindAsync(id);
+            if (local != null)
+            {
+                _context.GroupLocalizations.Remove(local);
+                await _context.SaveChangesAsync();
+            }
+
+            _context.Groups.Remove(group);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteBulkAsync(List<int> ids)
+    {
+        try
+        {
+            foreach (var id in ids)
+            {
+                await DeleteAsync(id);
+            }
+            return true;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public Task<IEnumerable<object>> GetAllTemplateDataAsync()
+    {
+        try
+        {
+            // return static or predefined template data
+            var data = new List<object>
+        {
+            new { Code = "101"},
+            new { Code = "505"}
+        }.AsEnumerable();
+
+            return Task.FromResult(data);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<object> GetAllGallaryAsync()
+    {
+        try
+        {
+            // return static or predefined template data
+            var data = new List<object>
+            {
+                new { Id = "101", ProfilePhoto = "C:\\Users\\Avenger\\Pictures\\Screenshots\\Screenshot (1).png" },
+                new { Id = "505", ProfilePhoto = "C:\\Users\\Avenger\\Pictures\\Screenshots\\Screenshot (1).png" },
             }.AsEnumerable();
 
-                return Task.FromResult(data);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return data;
         }
-
-        public async Task<object> GetAllGallaryAsync()
+        catch (Exception)
         {
-            try
-            {
-                // return static or predefined template data
-                var data = new List<object>
-                {
-                    new { Id = "101", ProfilePhoto = "C:\\Users\\Avenger\\Pictures\\Screenshots\\Screenshot (1).png" },
-                    new { Id = "505", ProfilePhoto = "C:\\Users\\Avenger\\Pictures\\Screenshots\\Screenshot (1).png" },
-                }.AsEnumerable();
 
-                return data;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<object> GetAllAuditsAsync()
+    public async Task<object> GetAllAuditsAsync()
+    {
+        try
         {
-            try
-            {
-                var audits = _context.GroupAudits
-                                    .OrderByDescending(x => x.Id)
-                                    .ToList();
-                return audits;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var audits = _context.GroupAudits
+                                .OrderByDescending(x => x.Id)
+                                .ToList();
+            return audits;
+        }
+        catch (Exception)
+        {
+            throw;
         }
     }
 }

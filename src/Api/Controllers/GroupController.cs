@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Interface;
+using Application.Interfaces;
 using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 

@@ -10,6 +10,7 @@ namespace Infrastructure.AutoMapper
 		{
 			CreateMap<EmployeeAddEditDto, Employee>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<GroupAddEditDto, Group>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+			CreateMap<PaymentModeAddEditDto, PaymentMode>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 		}
 	}
 }

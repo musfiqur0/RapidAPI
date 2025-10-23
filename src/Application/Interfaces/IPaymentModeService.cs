@@ -2,13 +2,13 @@
 
 namespace Application.Interfaces;
 
-public interface IEmployeeService
+public interface IPaymentModeService
 {
     Task<object> GetAllAsync(int pageNumber = 0, int pageSize = 0);
-    Task<EmployeeAddEditDto?> GetSingleAsync(int id);
-    Task<EmployeeAddEditDto> CreateSingleAsync(EmployeeAddEditDto dto);
-    Task<IEnumerable<EmployeeAddEditDto>> CreateBulkAsync(IEnumerable<EmployeeAddEditDto> dto);
-    Task<EmployeeAddEditDto> UpdateAsync(EmployeeAddEditDto dto);
+    Task<PaymentModeAddEditDto?> GetSingleAsync(int id);
+    Task<PaymentModeAddEditDto> CreateSingleAsync(PaymentModeAddEditDto dto);
+    Task<IEnumerable<PaymentModeAddEditDto>> CreateBulkAsync(IEnumerable<PaymentModeAddEditDto> dto);
+    Task<PaymentModeAddEditDto> UpdateAsync(PaymentModeAddEditDto dto);
     Task<bool> DeleteAsync(int id);
     Task<bool> DeleteBulkAsync(List<int> ids);
     Task<IEnumerable<object>> GetAllTemplateDataAsync();

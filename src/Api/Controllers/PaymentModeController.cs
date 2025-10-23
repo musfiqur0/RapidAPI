@@ -8,11 +8,11 @@ namespace Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class PaymentModeController : ControllerBase
     {
-        private readonly IEmployeeService _service;
+        private readonly IPaymentModeService _service;
 
-        public EmployeeController(IEmployeeService service)
+        public PaymentModeController(IPaymentModeService service)
         {
             _service = service;
         }
@@ -33,27 +33,25 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSingle(EmployeeAddEditDto dto)
+        public async Task<IActionResult> CreateSingle(PaymentModeAddEditDto dto)
         {
             var result = await _service.CreateSingleAsync(dto);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBulk(List<EmployeeAddEditDto> dto)
+        public async Task<IActionResult> CreateBulk(List<PaymentModeAddEditDto> dto)
         {
             var result = await _service.CreateBulkAsync(dto);
             return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(EmployeeAddEditDto dto)
+        public async Task<IActionResult> Update(PaymentModeAddEditDto dto)
         {
             var result = await _service.UpdateAsync(dto);
             return Ok(result);
         }
-
-
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)

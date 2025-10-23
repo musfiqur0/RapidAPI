@@ -1,6 +1,6 @@
-﻿using Application.Interface;
+﻿using Application.Interfaces;
 using Infrastructure.AutoMapper;
-using Infrastructure.Service;
+using Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +13,7 @@ namespace Infrastructure.DependencyInjection
             services.AddAutoMapper(typeof(AutoMapperProfile));
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<IPaymentModeService, PaymentModeService>();
 
         }
     }

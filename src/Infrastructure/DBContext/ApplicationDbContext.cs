@@ -17,6 +17,9 @@ namespace Infrastructure.DBContext
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupAudit> GroupAudits { get; set; }
         public DbSet<GroupLocalization> GroupLocalizations { get; set; }
+        public DbSet<PaymentMode> PaymentModes { get; set; }
+        public DbSet<PaymentModeAudit> PaymentModeAudits { get; set; }
+        public DbSet<PaymentModeLocalization> PaymentModeLocalizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
