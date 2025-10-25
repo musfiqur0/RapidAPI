@@ -14,6 +14,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IPaymentModeService, PaymentModeService>();
+            services.AddScoped<IJobPostService, JobPostService>();
 
         }
     }

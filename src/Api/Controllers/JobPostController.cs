@@ -1,20 +1,18 @@
 ﻿using Application.Common;
 using Application.DTOs;
 using Application.Interfaces;
-using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Api.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class GroupController : ControllerBase
+public class JobPostController : ControllerBase
 {
-    private readonly IGroupService _service;
+    private readonly IJobPostService _service;
 
-    public GroupController(IGroupService service)
+    public JobPostController(IJobPostService service)
     {
         _service = service;
     }
@@ -49,7 +47,7 @@ public class GroupController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateSingle(GroupAddEditDto dto)
+    public async Task<IActionResult> CreateSingle(JobPostAddEditDto dto)
     {
         var result = await _service.CreateSingleAsync(dto);
         var response = new RequestResponse
@@ -63,7 +61,7 @@ public class GroupController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBulk(List<GroupAddEditDto> dto)
+    public async Task<IActionResult> CreateBulk(List<JobPostAddEditDto> dto)
     {
         var result = await _service.CreateBulkAsync(dto);
         var response = new RequestResponse
@@ -77,7 +75,7 @@ public class GroupController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(GroupAddEditDto dto)
+    public async Task<IActionResult> Update(JobPostAddEditDto dto)
     {
         var result = await _service.UpdateAsync(dto);
         var response = new RequestResponse
