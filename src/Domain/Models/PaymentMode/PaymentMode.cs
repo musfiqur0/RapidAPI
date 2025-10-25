@@ -2,7 +2,7 @@
 
 public class PaymentMode : Base
 {
-    public string BankAccounts { get; set; } = string.Empty;
+    public string BankAccounts { get; set; }
     public bool Default { get; set; }
     public bool Draft { get; set; }
 }

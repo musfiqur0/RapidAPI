@@ -30,6 +30,10 @@ namespace Infrastructure.DBContext
         public DbSet<JobPostAudit> JobPostAudits { get; set; }
         public DbSet<JobPostLocalization> JobPostLocalizations { get; set; }
 
+        public DbSet<PreAlert> PreAlerts { get; set; }
+        public DbSet<PreAlertAudit> PreAlertAudits { get; set; }
+        public DbSet<PreAlertLocalization> PreAlertLocalizations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

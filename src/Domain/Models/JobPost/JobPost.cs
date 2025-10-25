@@ -11,10 +11,10 @@ public class JobPost
     public DateTime ClosingDate { get; set; }
     public int GenderId { get; set; }
     public int MinimumExperienceId { get; set; }
-    public bool Featured { get; set; } = false;
+    public bool Featured { get; set; }
     public short StatusId { get; set; }
     public Status Status { get; set; }
     public string ShortDescription { get; set; }
     public string LongDescription { get; set; }
-    public bool Active { get; set; } = true;
+    public bool Active { get; set; }
 }
