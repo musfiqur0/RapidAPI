@@ -8,6 +8,10 @@ namespace Infrastructure.DBContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<Allowance> Allowances { get; set; }
+        public DbSet<AllowanceAudit> AllowanceAudits { get; set; }
+        public DbSet<AllowanceLocalization> AllowanceLocalizations { get; set; }
+
         public DbSet<BenefitPenalty> BenefitPenaltys { get; set; }
         public DbSet<BenefitPenaltyAudit> BenefitPenaltyAudits { get; set; }
         public DbSet<BenefitPenaltyLocalization> BenefitPenaltyLocalizations { get; set; }
