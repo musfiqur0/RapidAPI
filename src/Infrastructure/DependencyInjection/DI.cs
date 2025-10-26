@@ -12,6 +12,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
+            services.AddScoped<ITerminationService, TerminationService>();
             services.AddScoped<ICandidateSelectionService, CandidateSelectionService>();
             services.AddScoped<IIncrementService, IncrementService>();
             services.AddScoped<IPreAlertService, PreAlertService>();

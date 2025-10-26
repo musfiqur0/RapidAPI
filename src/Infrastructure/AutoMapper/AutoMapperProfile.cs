@@ -8,6 +8,7 @@ namespace Infrastructure.AutoMapper
 	{
 		public AutoMapperProfile()
 		{
+			CreateMap<TerminationAddEditDto, Termination>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<CandidateSelectionAddEditDto, CandidateSelection>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<IncrementAddEditDto, Increment>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<PreAlertAddEditDto, PreAlert>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));

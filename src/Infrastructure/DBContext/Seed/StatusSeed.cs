@@ -17,6 +17,9 @@ public static class StatusSeed
                 // General statuses
                 new Status { Name = "Active", Description = "Record is active", StatusTypeId = generalType.Id },
                 new Status { Name = "Inactive", Description = "Record is inactive", StatusTypeId = generalType.Id },
+                new Status { Name = "Draft", Description = "Record is draft", StatusTypeId = generalType.Id },
+                new Status { Name = "Updated", Description = "Record is updated", StatusTypeId = generalType.Id },
+                new Status { Name = "Deleted", Description = "Record is deleted", StatusTypeId = generalType.Id },
 
                 // Workflow statuses
                 new Status { Name = "On Hold", Description = "Process is temporarily paused", StatusTypeId = workflowType.Id },
