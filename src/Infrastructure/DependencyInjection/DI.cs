@@ -11,12 +11,14 @@ namespace Infrastructure.DependencyInjection
         public static void DiExtension(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
-            services.AddScoped<IEmployeeService, EmployeeService>();
-            services.AddScoped<IGroupService, GroupService>();
-            services.AddScoped<IPaymentModeService, PaymentModeService>();
-            services.AddScoped<IJobPostService, JobPostService>();
-            services.AddScoped<IPreAlertService, PreAlertService>();
+
+            services.AddScoped<ICandidateSelectionService, CandidateSelectionService>();
             services.AddScoped<IIncrementService, IncrementService>();
+            services.AddScoped<IPreAlertService, PreAlertService>();
+            services.AddScoped<IJobPostService, JobPostService>();
+            services.AddScoped<IPaymentModeService, PaymentModeService>();
+            services.AddScoped<IGroupService, GroupService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
 
         }
     }
