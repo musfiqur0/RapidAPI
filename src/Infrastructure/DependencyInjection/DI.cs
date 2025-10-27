@@ -12,6 +12,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
+            services.AddScoped<IOnboardingService, OnboardingService>();
             services.AddScoped<IDeductionService, DeductionService>();
             services.AddScoped<IAllowanceService, AllowanceService>();
             services.AddScoped<IBenefitPenaltyService, BenefitPenaltyService>();

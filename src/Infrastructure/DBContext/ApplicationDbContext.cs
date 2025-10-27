@@ -8,6 +8,10 @@ namespace Infrastructure.DBContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<Onboarding> Onboardings { get; set; }
+        public DbSet<OnboardingAudit> OnboardingAudits { get; set; }
+        public DbSet<OnboardingLocalization> OnboardingLocalizations { get; set; }
+
         public DbSet<Deduction> Deductions { get; set; }
         public DbSet<DeductionAudit> DeductionAudits { get; set; }
         public DbSet<DeductionLocalization> DeductionLocalizations { get; set; }
