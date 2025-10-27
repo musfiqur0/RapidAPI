@@ -8,6 +8,7 @@ namespace Infrastructure.AutoMapper
 	{
 		public AutoMapperProfile()
 		{
+			CreateMap<BonusAddEditDto, Bonus>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<OnboardingAddEditDto, Onboarding>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<DeductionAddEditDto, Deduction>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<AllowanceAddEditDto, Allowance>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));

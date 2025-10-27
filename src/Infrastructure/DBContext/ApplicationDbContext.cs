@@ -7,7 +7,10 @@ namespace Infrastructure.DBContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
-
+        public DbSet<Bonus> Bonuss { get; set; }
+        public DbSet<BonusAudit> BonusAudits { get; set; }
+        public DbSet<BonusLocalization> BonusLocalizations { get; set; }
+        
         public DbSet<Onboarding> Onboardings { get; set; }
         public DbSet<OnboardingAudit> OnboardingAudits { get; set; }
         public DbSet<OnboardingLocalization> OnboardingLocalizations { get; set; }
