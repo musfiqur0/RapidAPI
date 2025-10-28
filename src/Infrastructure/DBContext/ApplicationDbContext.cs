@@ -7,10 +7,16 @@ namespace Infrastructure.DBContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
+
+
+        public DbSet<LeaveApplication> LeaveApplications { get; set; }
+        public DbSet<LeaveApplicationAudit> LeaveApplicationAudits { get; set; }
+        public DbSet<LeaveApplicationLocalization> LeaveApplicationLocalizations { get; set; }
+
         public DbSet<Bonus> Bonuss { get; set; }
         public DbSet<BonusAudit> BonusAudits { get; set; }
         public DbSet<BonusLocalization> BonusLocalizations { get; set; }
-        
+
         public DbSet<Onboarding> Onboardings { get; set; }
         public DbSet<OnboardingAudit> OnboardingAudits { get; set; }
         public DbSet<OnboardingLocalization> OnboardingLocalizations { get; set; }
@@ -38,7 +44,7 @@ namespace Infrastructure.DBContext
         public DbSet<Increment> Increments { get; set; }
         public DbSet<IncrementAudit> IncrementAudits { get; set; }
         public DbSet<IncrementLocalization> IncrementLocalizations { get; set; }
-        
+
         public DbSet<PreAlert> PreAlerts { get; set; }
         public DbSet<PreAlertAudit> PreAlertAudits { get; set; }
         public DbSet<PreAlertLocalization> PreAlertLocalizations { get; set; }
@@ -59,6 +65,7 @@ namespace Infrastructure.DBContext
         public DbSet<EmployeeAudit> EmployeeAudits { get; set; }
         public DbSet<EmployeeLocalization> EmployeeLocalizations { get; set; }
 
+        public DbSet<Attachment> Attachments { get; set; }
         public DbSet<StatusType> StatusTypes { get; set; }
         public DbSet<Status> Status { get; set; }
         public DbSet<Language> Languages { get; set; }
