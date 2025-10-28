@@ -8,6 +8,17 @@ namespace Infrastructure.DBContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<OvertimeType> OvertimeTypes { get; set; }
+        public DbSet<OvertimeTypeAudit> OvertimeTypeAudits { get; set; }
+        public DbSet<OvertimeTypeLocalization> OvertimeTypeLocalizations { get; set; }
+
+        public DbSet<SourceType> SourceTypes { get; set; }
+        public DbSet<SourceTypeAudit> SourceTypeAudits { get; set; }
+        public DbSet<SourceTypeLocalization> SourceTypeLocalizations { get; set; }
+
+        public DbSet<AllowanceType> AllowanceTypes { get; set; }
+        public DbSet<AllowanceTypeAudit> AllowanceTypeAudits { get; set; }
+        public DbSet<AllowanceTypeLocalization> AllowanceTypeLocalizations { get; set; }
 
         public DbSet<LeaveApplication> LeaveApplications { get; set; }
         public DbSet<LeaveApplicationAudit> LeaveApplicationAudits { get; set; }

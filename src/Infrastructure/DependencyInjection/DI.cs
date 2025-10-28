@@ -12,6 +12,9 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
+            services.AddScoped<IOvertimeTypeService, OvertimeTypeService>();
+            services.AddScoped<ISourceTypeService, SourceTypeService>();
+            services.AddScoped<IAllowanceTypeService, AllowanceTypeService>();
             services.AddScoped<ILeaveApplicationService, LeaveApplicationService>();
             services.AddScoped<IBonusService, BonusService>();
             services.AddScoped<IOnboardingService, OnboardingService>();
