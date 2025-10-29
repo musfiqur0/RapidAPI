@@ -8,6 +8,10 @@ namespace Infrastructure.DBContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<WeeklyHoliday> WeeklyHolidays { get; set; }
+        public DbSet<WeeklyHolidayAudit> WeeklyHolidayAudits { get; set; }
+        public DbSet<WeeklyHolidayLocalization> WeeklyHolidayLocalizations { get; set; }
+        
         public DbSet<OvertimeType> OvertimeTypes { get; set; }
         public DbSet<OvertimeTypeAudit> OvertimeTypeAudits { get; set; }
         public DbSet<OvertimeTypeLocalization> OvertimeTypeLocalizations { get; set; }

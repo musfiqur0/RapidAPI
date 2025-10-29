@@ -8,6 +8,7 @@ namespace Infrastructure.AutoMapper
 	{
 		public AutoMapperProfile()
 		{
+			CreateMap<WeeklyHolidayAddEditDto, WeeklyHoliday>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<OvertimeTypeAddEditDto, OvertimeType>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<SourceTypeAddEditDto, SourceType>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 			CreateMap<AllowanceTypeAddEditDto, AllowanceType>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
