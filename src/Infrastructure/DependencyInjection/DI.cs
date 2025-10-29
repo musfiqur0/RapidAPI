@@ -12,6 +12,7 @@ namespace Infrastructure.DependencyInjection
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
+            services.AddScoped<ILeavesApprovalService, LeavesApprovalService>();
             services.AddScoped<IWeeklyHolidayService, WeeklyHolidayService>();
             services.AddScoped<IOvertimeTypeService, OvertimeTypeService>();
             services.AddScoped<ISourceTypeService, SourceTypeService>();
