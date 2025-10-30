@@ -8,6 +8,10 @@ namespace Infrastructure.DBContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<TermsConditions> TermsConditions { get; set; }
+        public DbSet<TermsConditionsAudit> TermsConditionsAudits { get; set; }
+        public DbSet<TermsConditionsLocalization> TermsConditionsLocalizations { get; set; }
+
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentAudit> AppointmentAudits { get; set; }
         public DbSet<AppointmentLocalization> AppointmentLocalizations { get; set; }
