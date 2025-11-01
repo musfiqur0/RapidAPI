@@ -8,6 +8,18 @@ namespace Infrastructure.DBContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
+        public DbSet<PurchaseReturn> PurchaseReturns { get; set; }
+        public DbSet<PurchaseReturnAudit> PurchaseReturnAudits { get; set; }
+        public DbSet<PurchaseReturnLocalization> PurchaseReturnLocalizations { get; set; }
+        
+        public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
+        public DbSet<PurchaseInvoiceAudit> PurchaseInvoiceAudits { get; set; }
+        public DbSet<PurchaseInvoiceLocalization> PurchaseInvoiceLocalizations { get; set; }
+        
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<PurchaseOrderAudit> PurchaseOrderAudits { get; set; }
+        public DbSet<PurchaseOrderLocalization> PurchaseOrderLocalizations { get; set; }
+        
         public DbSet<TermsConditions> TermsConditions { get; set; }
         public DbSet<TermsConditionsAudit> TermsConditionsAudits { get; set; }
         public DbSet<TermsConditionsLocalization> TermsConditionsLocalizations { get; set; }
